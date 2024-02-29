@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import CompletionCheck from './CompletionCheck';
 
 const GPT_API_KEY = "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";
 
@@ -26,6 +27,7 @@ const GridParser = async ({ grid = '', CPU = 'O', USER = 'X' }: Props) => {
     try {
         gridList = JSON.parse(gridString);//
     } catch (error) {
+        CompletionCheck({CPU: CPU, USER: USER});
         alert("Grid string: \n"  + gridString)
         alert ("original grid:" + grid)
     }

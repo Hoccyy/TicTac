@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-const GPT_API_KEY = "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";
+const GPT_API_KEY = process.env.NEXT_PUBLIC_GPT_API_KEY13;
 
 const openai = new OpenAI({
     apiKey: GPT_API_KEY,
@@ -37,7 +37,7 @@ function routeCheck(role: string) {
         if (GridAsArray.slice(i, i + 3).join('') === role.repeat(3)) {
             console.log(role + " wins!");
             rowWin = true;
-            break; // Break out of the loop since we've already found a win
+            break;
         }
     }
     if (rowWin) {
@@ -69,7 +69,7 @@ function routeCheck(role: string) {
         console.log('Tied!');
         setTimeout(function() {
             document.getElementById('StatusMessage')!.innerHTML = ("Tied!");
-        }, 2000);
+        }, 1300);
         document.getElementById('StatusMessage')!.innerHTML = '⠀';
         resetter();
     }
@@ -78,20 +78,21 @@ function routeCheck(role: string) {
     return false;
 }
 
+function sleep(ms: number) {
+    const end = Date.now() + ms;
+    while (Date.now() < end) continue;
+}
+
 function resetter() {
     // Store grid as array
     for (let i = 0; i < 9; i++) {
         document.getElementById('gridNum'+i)!.innerHTML = '';
         document.getElementById('gridContainer'+i)!.setAttribute('style', 'background-color: grey;');
     }
-    function sleep(ms: number) {
-        const end = Date.now() + ms;
-        while (Date.now() < end) continue;
-      }
-      
-    sleep(3000); 
-    alert(1313)
-    document.getElementById('StatusMessage')!.innerHTML = '⠀';
+    
+
+    sleep(1300);
+    //document.getElementById('StatusMessage')!.innerHTML = '⠀';
 }
 
 const CompletionCheck = async ({ CPU = 'O', USER = 'X' }: Props) => {
@@ -100,18 +101,17 @@ const CompletionCheck = async ({ CPU = 'O', USER = 'X' }: Props) => {
         document.getElementById('tallier')!.innerHTML = (parseInt(document.getElementById('tallier')!.innerHTML.split(' - ')[0]) + 1) + ' - ' + parseInt(document.getElementById('tallier')!.innerHTML.split(' - ')[1]);
         document.getElementById('StatusMessage')!.innerHTML = ("User won! :D");
         resetter();
-        return
+        return true;
     }
 
     //CPU Check
     if (routeCheck(CPU)) {
         document.getElementById('tallier')!.innerHTML = parseInt(document.getElementById('tallier')!.innerHTML.split(' - ')[0]) + ' - ' + (parseInt(document.getElementById('tallier')!.innerHTML.split(' - ')[1]) + 1);
         document.getElementById('StatusMessage')!.innerHTML = ("CPU Won! 🦾🤖");
-        //document.getElementById('StatusMessage')!.innerHTML = '⠀';
         resetter();
-        return
+        return true;
     }
-    return;
+    return false;
 };
 
 export default CompletionCheck;

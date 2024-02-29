@@ -4,10 +4,14 @@ import styles from '../page.module.css'
 import GetMoves from './GetMoves';
 import CompletionCheck from './CompletionCheck';
 
+function sleep(ms: number) {
+    const end = Date.now() + ms;
+    while (Date.now() < end) continue;
+}
 
 const Grid = ({ keyID = '0', CPU = 'O', USER = 'X' }) => {
     return (
-        <div id={'gridContainer'+keyID} className={styles.grid} onClick={() => {
+        <div id={'gridContainer'+keyID} className={styles.grid} onClick={async () => {
             let thisGrid = document.getElementById('gridNum'+keyID);
             if (thisGrid!.innerHTML != '') {
                 return;
@@ -32,7 +36,9 @@ const Grid = ({ keyID = '0', CPU = 'O', USER = 'X' }) => {
                 '\n' +
                 GridAsArray.slice(6, 9)
             );
-
+            if (await CompletionCheck({ CPU: CPU, USER: USER })) {
+                return;
+            }
             GetMoves({ grid: gridString, CPU: CPU, USER: USER });
         }}>
             <h1 id={'gridNum'+keyID}></h1>

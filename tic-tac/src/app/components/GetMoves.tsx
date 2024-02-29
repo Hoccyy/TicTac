@@ -20,10 +20,10 @@ const GetMoves = async ({ grid = '', CPU = 'O', USER = 'X' }: Props) => {
 
     // Processes the user's request through the OpenAI API with selective prompting
     const stream = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo-0613",
         messages: [{
             role: "user",
-            content: "This is a game of Tic tac toe played on a 3x3 grid. You are playing as the " + CPU + " on this grid:" + grid +
+            content: "This is a game of Tic tac toe played on a 3x3 grid and as you know, you can only do one move at a time. You are playing as the " + CPU + " on this grid:" + grid +
             "The rules you MUST follow are:\n" +
             "1. You cannot change or overwrite any characters '" + USER + 
             "'.\n2. You CANNOT move around the users character, '" + USER+ "'. all characters '" + USER +  "' must stay intact the entire time." + 
@@ -51,7 +51,16 @@ const GetMoves = async ({ grid = '', CPU = 'O', USER = 'X' }: Props) => {
     }
     //alert(CPUGrid);
     GridParser({grid : CPUGrid, CPU: CPU, USER : USER});
-    CompletionCheck({ CPU: CPU, USER : USER});
+    //CompletionCheck({ CPU: CPU, USER : USER});
+
+    function sleep(ms: number) {
+        const end = Date.now() + ms;
+        while (Date.now() < end) continue;
+    }
+    if (await CompletionCheck({ CPU: CPU, USER: USER })) {
+        document.getElementById('StatusMessage')!.innerHTML = ("User won! :D");
+        sleep(3000);
+    }
     
     loadingMessage!.innerHTML = '⠀';
     return CPUGrid;
